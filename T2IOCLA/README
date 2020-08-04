@@ -1,0 +1,25 @@
+Sulimovici Raoul-Renatto 321CD
+
+Task1->
+Functiile folosite sunt xor_image, find_text, print_text, bruteforce_singlebyte_xor.
+	-xor_image primeste parametru imaginea si dimensiunile ei si o valoare cu care face xor. Itereaza pana la sfarsitul matricei.
+	- find_text cauta cuvantul revient in matrice si returneaza indexul unde a gasit cuvantul. Am cautat cuvantul litera cu litera in ASCII
+	-print_text primeste parametru xor-ul folosit, linia la care este mesajul, imaginea si latimea matricei. Printeaza mesajul gasit, xor si linia.
+	-bruteforce foloseste toate aceste functii si face xor inainte si inapoi pe matrice pana gasim mesajul ascuns. 
+Task2->
+	Apeleaza functia de la task1 si calculeaza noua cheie dupa formula data in enunt. Voi scrie mesajul dorit litera cu litera pe linia urmatoare
+	celei pe care am gasit mesajul ascuns si voi face xor cu noua cheie.
+Task3->
+	functia Morse_encrypt va verifica fiecare litera a input-ului si va scrie in pixelii imaginii codificare Morse corespunzatoare.
+Task4->
+	Voi compara fiecare bit al input-ului cu o masca si voi scrie in lsb-ului fiecarui pixel din imagine conform bit-ului mentionat.
+	Shiftez masca pentru a parcurge toti bitii de care am nevoie.
+Task5->
+	Foloseste acelasi principiu ca la 4, facand shiftarea invers si cautand mai intai bitii imaginii cu masca.
+Task6->
+	Am folosit o functie de find_max pentru a obtine maximul din imagine asa cum este in output.
+	Nu m-am folosit de print_image, deoarece nu am vrut sa suprascriu imaginea, ci sa printez matricea cautata numar cu numar.
+	Functia blur va testa corner case-urile (prima/ultima linie, prima/ultima coloana). Daca nu suntem in acele cazuri vom calcula suma
+	elementelor cerute folosind indexul ecx cu care am parcurs imaginea. L-am incrementat pentru a obtine dreapta, decrementat stanga, 
+	am adaugat image_width pentru elementul de jos, scazut image_width pentru elementul de sus.
+	Am printat valorile

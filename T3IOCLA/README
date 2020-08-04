@@ -1,0 +1,25 @@
+#Sulimovici Raoul-Renatto 321CD
+
+Task1 ->
+    Vulnerabilitatea binarului nice se afla in functia de la adresa 0x8048649. Aceasta functie este vulnerabila deoarece, la un moment dat in functie, se muta in registrul eax ce se afla la ebp + 24 ( [ebp + 0x18]), unde se afla adresa 0x804ab30. Valoarea de la ebp + 24 poate fi suprascrisa pe stiva oferind un input destul de lung, urmat de o adresa folositoare astfel incat sa punem la ebp + 24 ce ne dorim.
+
+Task2->
+    flag-ul obtinut este:
+    NICE_FLAG{b0c52d1e71040663f1fdcf4b127d4de3}
+
+    Pentru a-l obtine am suprascris la ebp + 24 adresa functiei 0x80485b1 care printeaza flag-ul. Pentru a suprascrie aceasta adresa am folosit un payload care contine 946 de caractere irelevante doar pentru a ajunge in locul dorit ( 946 de caractere 'A') dupa care am scris adresa in little-endian folosind comanda "python -c 'print "A" * 946 + "\xb1\x85\x04\x08"' > nice_payload ".
+
+    Am aflat numarul de caractere junk, cele 946, numarand de la adresa unde incepe salvarea pe stiva a payload-ului pana la locul de care avem nevoie ( ebp + 24), tinand cont de toate schimbarile facute stivei pe parcurs: push, sub esp, etc. Am folosit gdb pentru a monitoriza la runtime executia si am verificat continuu ce se afla la adresele cautate si la cele invecinate. Am scris caractere pana am ajuns la combinatia dorita din aproape in aproape. Am folosit objdump pentru a observa codul in assembly.
+
+Task3->
+    flag-ul obtinut este: 
+    NAUGHTY_FLAG{cbb0d75ae3ce6f047861ffb3023c2f98}
+
+    Vulnerabilitatea acestui executabil este aceeasi ca cea din cazul nice, doar ca pana sa ajungem la call eax, functiile vor testa daca la anumite adrese de pe stiva se afla o combinatie de valori. Functia pe care am suprascris-o si am apelat-o se afla tot la adresa 0x80485b1, ca in cazul primului executabil. Am folosit tot comanda python -c 'print' si creat payload-ul naughty.
+
+    Acest payload este mai complex si complicat decat primul, avand mai multe caractere in el. Am construit acest payload folosind tot gdb si urmarind executia si valorile de la adresele cautate si invecinate pe tot parcursul executiei si efectuarii temei. Procesul a constat in mare pare in scrierea de caractere junk, urmate de niste valori necesare parcurgerii codului. In cazul in care nu se gaseau aceste valori se iesea din executie.
+
+Task4->
+    Pentru a obtine shell-ul am folosit acelasi payload ca la task-ul 3, dar am modificat ultimii 4 bytes scrisi, adica adresa pe care o vom apela cu call eax. Adresa pe care am apelat-o in acest caz este 0xb7f62a0b. Pentru a afla aceasta adresa am folosit gdb pe binarul naughty, am pus un breakpoint pe main si am rulat. Dupa care am apelat in gdb "print &system", comanda care imi afiseaza adresa functiei system(). Incepand de la aceasta adresa se gasesc toate environment variables ale sistemului, inclusiv variabila "SHELL = "/bin/sh"". Asa ca am folosit comanda "find &system,+9999999,"/bin/sh"" care imi afiseaza adresa string-ului "/bin/sh". Aceasta adresa este chiar 0xb7f62a0b, in cazul meu, asa ca asta trebuie sa fie suprascris pentru apelul call eax. Astfel, dupa rularea executabilului cu payload in gdb, se va afisa shell-ul /bin/sh.
+
+    Obtinerea shell-ului fara gdb nu a fost posibila deoarece adresele functiei system si a string-ului /bin/sh difera in momentul iesirii din gdb. Daca rulez payload-ul direct pe executabil, acesta arata SEGFAULT. Pentru a inlatura eroarea de segfault putem afla adresa de exit a functiei si sa suprascriem adresa de return cu cea de exit. Aceasta este 0xb7e359d0 si o voi scrie in payload fix inainte de adresa /bin/sh. Acum programul nu mai ofera segfault.
